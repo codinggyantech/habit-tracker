@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Habits">
+  <title>Habit Tracker</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <h1 id="title">Today</h1>
+      <button class="btn-primary small" data-act="new" aria-label="New goal">+ New goal</button>
+    </div>
+  </header>
+
+  <main id="view" class="view" aria-live="polite"></main>
+
+  <nav class="tabbar" aria-label="Main">
+    <button data-tab="today" class="tab"><span class="ti">🏠</span><span>Today</span></button>
+    <button data-tab="goals" class="tab"><span class="ti">🎯</span><span>Goals</span></button>
+    <button data-tab="insights" class="tab"><span class="ti">📊</span><span>Insights</span></button>
+    <button data-tab="backup" class="tab"><span class="ti">💾</span><span>Backup</span></button>
+  </nav>
+
+  <div id="sheet" class="sheet" aria-hidden="true">
+    <div class="sheet-backdrop" data-act="close"></div>
+    <div class="sheet-panel" role="dialog" aria-modal="true">
+      <div class="sheet-handle"></div>
+      <button class="sheet-close" data-act="close" aria-label="Close">✕</button>
+      <div id="sheetBody"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
