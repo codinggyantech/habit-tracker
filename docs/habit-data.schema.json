@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Habit Tracker data (schemaVersion 2)",
+  "type": "object",
+  "required": ["goals", "logs"],
+  "properties": {
+    "app": { "const": "habit-tracker" },
+    "schemaVersion": { "type": "integer", "minimum": 1, "maximum": 2 },
+    "exportedAt": { "type": "string" },
+    "today": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "maxLength": 24 },
+          "icon": { "type": "string" },
+          "color": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" }
+        }
+      }
+    },
+    "settings": {
+      "type": "object",
+      "properties": {
+        "sort": { "enum": ["priority", "manual"] },
+        "group": { "enum": ["category", "priority"] }
+      }
+    },
+    "goals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "days", "start"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string", "minLength": 1, "maxLength": 60 },
+          "type": { "enum": ["daily", "times", "total"] },
+          "target": { "type": "number", "minimum": 0 },
+          "unit": { "type": "string", "maxLength": 20 },
+          "step": { "type": "number", "exclusiveMinimum": 0 },
+          "days": { "type": "integer", "minimum": 1, "maximum": 730 },
+          "start": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+          "end": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$", "description": "calculated, ignored on import" },
+          "category": { "type": "string" },
+          "priority": { "enum": ["high", "medium", "low"] },
+          "visibility": { "enum": ["private", "public"] },
+          "icon": { "type": "string" },
+          "summary": { "type": "object", "description": "calculated, ignored on import" }
+        },
+        "allOf": [
+          { "if": { "properties": { "type": { "enum": ["times", "total"] } } },
+            "then": { "required": ["target"], "properties": { "target": { "exclusiveMinimum": 0 } } } }
+        ]
+      }
+    },
+    "logs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["goalId", "date", "amount"],
+        "properties": {
+          "id": { "type": "string" },
+          "goalId": { "type": "string" },
+          "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+          "amount": { "type": "number", "exclusiveMinimum": 0 },
+          "ts": { "type": "number" }
+        }
+      }
+    }
+  }
+}

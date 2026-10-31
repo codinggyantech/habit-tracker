@@ -21,10 +21,11 @@ let CATEGORIES = {};   // id -> category, rebuilt from state.categories
 let reorderMode = false;
 const ICONS = ["💪","🏃","🧘","📚","💧","😴","🥗","💼","⚡","🎯","🧠","💰","✍️","🎨","🎵","🚴","🏊","🌱","📵","🙏"];
 const TYPES = {
-  total: "Total amount",
-  times: "Number of times",
-  daily: "Daily habit",
+  daily: "🔁 Daily habit",
+  times: "🔢 Custom: count",
+  total: "📏 Custom: amount",
 };
+const SCHEMA_VERSION = 2;   // version of the export/import file format (see docs/data-format.md)
 
 // ---------------------------------------------------------------- state
 let state = loadState();
@@ -128,6 +129,110 @@ function addLog(goalId, amount, date = todayStr()) {
   return log;
 }
 function removeLog(id) { state.logs = state.logs.filter((l) => l.id !== id); save(); }
+
+// ---------------------------------------------------------------- the standard goal (one place that defines a valid goal)
+// Used by the form, by backup import and mirrored by the MCP server, so every goal looks the same.
+const isDate = (s) => typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s) && iso(parse(s)) === s;
+const r2 = (n) => Math.round(n * 100) / 100;
+
+function makeGoal(raw, cats = CATEGORIES) {
+  const errors = [];
+  const name = String(raw.name ?? "").trim().slice(0, 60);
+  if (!name) errors.push("name is required");
+  const type = raw.type;
+  if (!TYPES[type]) errors.push(`type must be one of: ${Object.keys(TYPES).join(", ")}`);
+  const days = Math.round(Number(raw.days));
+  if (!(days >= 1 && days <= 730)) errors.push("days must be between 1 and 730");
+  if (!isDate(raw.start)) errors.push("start must be a valid date (YYYY-MM-DD)");
+  const target = type === "daily" ? 0 : Number(raw.target);
+  if (type !== "daily" && !(target > 0)) errors.push("target must be greater than 0");
+  const step = type === "total" ? Number(raw.step ?? 1) : 1;
+  if (!(step > 0)) errors.push("step must be greater than 0");
+  const priority = raw.priority ?? "medium";
+  if (!PRIORITIES[priority]) errors.push("priority must be high, medium or low");
+  const visibility = raw.visibility ?? raw.vis ?? "private";
+  if (!["private", "public"].includes(visibility)) errors.push("visibility must be private or public");
+  if (errors.length) return { errors };
+  const catId = raw.category ?? raw.cat ?? "other";
+  return { goal: {
+    id: raw.id || uid(), name, type, target,
+    unit: type === "total" ? String(raw.unit ?? "").trim().slice(0, 20) : type === "times" ? "times" : "",
+    step, days, start: raw.start, cat: cats[catId] ? catId : "other",
+    icon: String(raw.icon || "🎯").slice(0, 4), vis: visibility, priority,
+  } };
+}
+
+function makeLog(raw, goalIds) {
+  const amount = Number(raw.amount);
+  if (!goalIds.has(raw.goalId)) return { error: "unknown goal" };
+  if (!isDate(raw.date)) return { error: "bad date" };
+  if (!(amount > 0) || !isFinite(amount)) return { error: "amount must be greater than 0" };
+  return { log: { id: raw.id || uid(), goalId: raw.goalId, date: raw.date, amount, ts: Number(raw.ts) || Date.now() } };
+}
+
+// Everything the app knows, in the standard v2 file format. "summary" is calculated and ignored on import.
+function exportPayload() {
+  return {
+    app: "habit-tracker", schemaVersion: SCHEMA_VERSION, exportedAt: new Date().toISOString(), today: todayStr(),
+    categories: state.categories.map((c) => ({ id: c.id, label: c.label, icon: c.icon, color: c.color })),
+    settings: { ...state.settings },
+    goals: state.goals.map((g) => {
+      const s = goalStats(g);
+      return {
+        id: g.id, name: g.name, type: g.type, target: g.target, unit: g.unit, step: g.step, days: g.days,
+        start: g.start, end: s.end, category: g.cat, priority: g.priority, visibility: g.vis, icon: g.icon,
+        summary: { done: r2(s.done), target: s.target, percent: Math.round(s.pct * 1000) / 10, status: s.status.cls,
+                   remaining: r2(s.remaining), needPerDay: r2(s.needPerDay), daysLeft: s.daysLeft, streak: s.streak, todayAmount: r2(s.todayAmt) },
+      };
+    }),
+    logs: state.logs.map((l) => ({ id: l.id, goalId: l.goalId, date: l.date, amount: l.amount, ts: l.ts }))
+      .sort((a, b) => a.date.localeCompare(b.date) || a.ts - b.ts),
+  };
+}
+
+// Reads a backup file (v1 from Phase 1 or v2), validates every goal and log, and reports what was skipped.
+function parseImport(text) {
+  let raw;
+  try { raw = JSON.parse(text); } catch (e) { throw new Error("the file is not valid JSON"); }
+  if (!raw || !Array.isArray(raw.goals) || !Array.isArray(raw.logs)) throw new Error('the file needs "goals" and "logs" lists');
+  const ver = raw.schemaVersion ?? raw.version ?? 1;
+  if (ver > SCHEMA_VERSION) throw new Error(`the file is from a newer version (${ver}); update the app first`);
+  const warnings = [];
+  const cats = (Array.isArray(raw.categories) ? raw.categories : [])
+    .filter((c) => c && typeof c.id === "string" && c.id && c.label)
+    .map((c) => ({ id: c.id, label: String(c.label).slice(0, 24), icon: String(c.icon || "🏷").slice(0, 4), color: /^#[0-9a-f]{6}$/i.test(c.color) ? c.color : "#0ea5e9" }));
+  const base = normalize({ categories: cats, settings: raw.settings });
+  const catMap = Object.fromEntries(base.categories.map((c) => [c.id, c]));
+  const goals = [];
+  for (const g of raw.goals) {
+    const res = makeGoal(g || {}, catMap);
+    if (res.errors) warnings.push(`Goal "${g && g.name ? g.name : "?"}" skipped: ${res.errors.join("; ")}`);
+    else goals.push(res.goal);
+  }
+  const ids = new Set(goals.map((g) => g.id));
+  const logs = [];
+  let badLogs = 0;
+  for (const l of raw.logs) { const res = makeLog(l || {}, ids); if (res.log) logs.push(res.log); else badLogs++; }
+  if (badLogs) warnings.push(`${badLogs} log entries skipped (unknown goal, bad date or amount)`);
+  return { state: normalize({ goals, logs, categories: base.categories, settings: base.settings }), warnings };
+}
+
+const csvCell = (v) => (typeof v === "number" ? String(v) : `"${String(v).replace(/"/g, '""')}"`);
+function logsCsv() {
+  const byId = Object.fromEntries(state.goals.map((g) => [g.id, g]));
+  const rows = [["date", "goal", "category", "type", "amount", "unit", "priority"]];
+  for (const l of [...state.logs].sort((a, b) => a.date.localeCompare(b.date) || a.ts - b.ts)) {
+    const g = byId[l.goalId]; if (!g) continue;
+    rows.push([l.date, g.name, (CATEGORIES[g.cat] || {}).label || g.cat, g.type, l.amount, unitOf(g), g.priority]);
+  }
+  return rows.map((r) => r.map(csvCell).join(",")).join("\n");
+}
+function download(name, text, mime) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], { type: mime })); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
 
 // ---------------------------------------------------------------- tiny SVG helpers
 function ring(pct, size, stroke, color, label, sub, big = false) {
@@ -358,6 +463,7 @@ function renderBackup() {
   return `<div class="card"><h3 class="h">Your data lives on this device</h3>
     <p class="hint">Nothing is uploaded anywhere. Export a backup file now and then (or before clearing your browser data). Use Import to restore it, or to move to another phone.</p>
     <div class="btn-row"><button class="btn-primary" data-act="export">⬇ Export backup (JSON)</button>
+    <button class="btn-ghost" data-act="exportcsv">📄 Export logs (CSV)</button>
     <label class="btn-ghost" style="text-align:center;cursor:pointer">⬆ Import backup<input id="importFile" type="file" accept="application/json" hidden></label></div></div>
     <div class="card"><h3 class="h">Try it out</h3>
     <p class="hint">Loads 4 sample goals with some history so you can see the charts. It adds to your data; it does not replace it.</p>
@@ -418,11 +524,18 @@ function refreshDetail(first) {
 }
 
 // ---------------------------------------------------------------- forms
+const TEMPLATES = {
+  daily:   { label: "🔁 Daily habit",       type: "daily", name: "", days: 30, icon: "🧘", cat: "mind" },
+  pushups: { label: "💪 500 in 60 days",    type: "total", name: "Push-ups", target: 500, unit: "push-ups", step: 20, days: 60, icon: "💪", cat: "health" },
+  times:   { label: "🔢 Do it 11 times",    type: "times", name: "", target: 11, days: 60, icon: "🎯", cat: "other" },
+};
 function goalForm(g) {
   const edit = !!g;
   const v = g || { name: "", cat: "health", icon: "💪", type: "total", target: 500, unit: "push-ups", step: 20, days: 60, start: todayStr(), vis: "private", priority: "medium" };
   const html = `<h2 style="margin:6px 0 0">${edit ? "Edit goal" : "New goal"}</h2>
   <form id="goalForm">
+    ${edit ? "" : `<p class="hint" style="margin-bottom:6px">Quick start:</p>
+    <div class="tpls">${Object.entries(TEMPLATES).map(([k, t]) => `<button type="button" data-tpl="${k}">${t.label}</button>`).join("")}</div>`}
     <label class="f">Goal name<input name="name" required maxlength="60" value="${esc(v.name)}" placeholder="e.g. Push-ups"></label>
     <label class="f">What kind of goal?</label>
     <div class="seg">
@@ -463,31 +576,40 @@ function goalForm(g) {
     $("#stepWrap").style.display = t === "total" ? "block" : "none";
     $("#unitWrap").style.display = t === "total" ? "block" : "none";
     $("#typeHint").textContent = {
-      total: "Add up an amount over time, like 500 push-ups or 100 km. You choose how much to add each tap.",
-      times: "Count how many times you did something, like 11 workouts. Each tap adds 1.",
-      daily: "Do it once every day. The target is simply every day of the duration.",
+      daily: "A habit you do once every day (read, meditate, no sugar). Check it off each day; the target is every day of the duration.",
+      times: "Custom target: do something N times, like 11 workouts. Each tap counts one.",
+      total: "Custom target: add up an amount, like 500 push-ups or 100 km. You choose how much each tap adds.",
     }[t];
     $("#newCat").style.display = form.cat.value === "__new" ? "flex" : "none";
   };
   form.addEventListener("change", syncType); syncType();
+  form.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-tpl]"); if (!b) return;
+    const t = TEMPLATES[b.dataset.tpl];
+    if (t.name !== undefined && (t.name || !form.name.value)) form.name.value = t.name;
+    form.querySelector(`input[name=type][value=${t.type}]`).checked = true;
+    form.target.value = t.target || ""; form.unit.value = t.unit || ""; form.step.value = t.step || 1;
+    form.days.value = t.days; if (CATEGORIES[t.cat]) form.cat.value = t.cat;
+    const ic = form.querySelector(`input[name=icon][value="${t.icon}"]`); if (ic) ic.checked = true;
+    syncType();
+  });
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-    const f = new FormData(form), type = f.get("type");
-    let catId = f.get("cat");
-    if (catId === "__new") {
-      const label = f.get("cn").trim();
-      if (!label) { toast("Give the new category a name"); return; }
-      catId = addCategory(label, f.get("ci").trim() || "🏷", f.get("cc"));
-    }
-    const goal = {
-      id: g ? g.id : uid(), name: f.get("name").trim(), type,
-      target: type === "daily" ? 0 : Number(f.get("target")) || 1,
-      unit: type === "total" ? f.get("unit").trim() : type === "times" ? "times" : "",
-      step: type === "total" ? Number(f.get("step")) || 1 : 1,
-      days: Math.max(1, Math.round(Number(f.get("days")))), start: f.get("start"),
-      cat: catId, icon: f.get("icon") || "🎯", vis: f.get("vis"),
-      priority: PRIORITIES[f.get("priority")] ? f.get("priority") : "medium",
+    const f = new FormData(form);
+    const raw = {
+      id: g ? g.id : undefined, name: f.get("name"), type: f.get("type"), target: f.get("target"),
+      unit: f.get("unit"), step: Number(f.get("step")) || 1, days: f.get("days"), start: f.get("start"),
+      category: f.get("cat"), icon: f.get("icon"), visibility: f.get("vis"), priority: f.get("priority"),
     };
+    const isNewCat = raw.category === "__new";
+    if (isNewCat) {
+      if (!f.get("cn").trim()) { toast("Give the new category a name"); return; }
+      raw.category = "other"; // placeholder so validation passes; replaced below
+    }
+    const res = makeGoal(raw);
+    if (res.errors) { toast("⚠ " + res.errors[0]); return; }
+    const goal = res.goal;
+    if (isNewCat) goal.cat = addCategory(f.get("cn").trim(), f.get("ci").trim() || "🏷", f.get("cc"));
     if (edit) state.goals = state.goals.map((x) => (x.id === goal.id ? goal : x)); else state.goals.push(goal);
     save(); closeSheet(); render();
     toast(edit ? "Goal updated" : "Goal created 🎯");
@@ -609,6 +731,7 @@ document.addEventListener("click", (e) => {
       break;
     }
     case "export": exportData(); break;
+    case "exportcsv": exportCsv(); break;
     case "sample": loadSample(); break;
     case "wipe":
       if (confirm("Delete ALL goals and logs on this device? This cannot be undone.")) { state = normalize({}); rebuildCats(); save(); render(); toast("Everything deleted"); }
@@ -647,22 +770,24 @@ document.addEventListener("change", (e) => {
   const reader = new FileReader();
   reader.onload = () => {
     try {
-      const data = JSON.parse(reader.result);
-      if (!Array.isArray(data.goals) || !Array.isArray(data.logs)) throw new Error("bad file");
-      if (!confirm(`Import ${data.goals.length} goals and ${data.logs.length} logs? This replaces your current data.`)) return;
-      state = normalize(data); rebuildCats(); save(); render(); toast("Backup imported ✓");
-    } catch (err) { toast("That file is not a valid backup"); }
+      const res = parseImport(reader.result);
+      const warn = res.warnings.length ? `\n\nSkipped:\n- ${res.warnings.slice(0, 5).join("\n- ")}${res.warnings.length > 5 ? "\n- ..." : ""}` : "";
+      if (!confirm(`Import ${res.state.goals.length} goals and ${res.state.logs.length} logs? This replaces your current data.${warn}`)) return;
+      state = res.state; rebuildCats(); save(); render();
+      toast(res.warnings.length ? `Imported with ${res.warnings.length} warning(s)` : "Backup imported ✓");
+    } catch (err) { toast("Import failed: " + err.message); }
+    e.target.value = "";
   };
   reader.readAsText(file);
 });
 
 function exportData() {
-  const blob = new Blob([JSON.stringify({ app: "habit-tracker", version: 1, exportedAt: new Date().toISOString(), ...state }, null, 2)], { type: "application/json" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob); a.download = `habit-tracker-backup-${todayStr()}.json`;
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  download(`habit-tracker-${todayStr()}.json`, JSON.stringify(exportPayload(), null, 2), "application/json");
   toast("Backup downloaded");
+}
+function exportCsv() {
+  download(`habit-tracker-logs-${todayStr()}.csv`, logsCsv(), "text/csv");
+  toast("CSV downloaded");
 }
 
 function loadSample() {

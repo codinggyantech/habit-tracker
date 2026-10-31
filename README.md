@@ -22,6 +22,12 @@ Your data is stored in your browser (localStorage). Use Backup -> Export to save
   or pick "New category" when creating a goal.
 - Old Phase 1 backups still import: missing priorities become Medium.
 
+## Standard data format (for export, import and the MCP server)
+- One standard goal format with validation: see `docs/data-format.md` and `docs/habit-data.schema.json`.
+- Export JSON (v2) includes a calculated `summary` per goal; Export CSV gives one row per log.
+- Import validates every goal and log, reports what it skipped, and still accepts Phase 1 backups.
+- New goal form: pick **Daily habit** or a **Custom** target (count or amount), or start from a quick template.
+
 ## Run it on your computer
 Opening index.html directly works for most things. For the full experience:
 ```

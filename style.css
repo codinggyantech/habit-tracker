@@ -216,3 +216,5 @@ label.f > input, label.f > select { display: block; width: 100%; margin-top: 5px
 .catedit input[type=text], .catedit input:not([type]) { padding: 10px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); font-size: 16px; color: var(--text); }
 .catedit input[type=color] { width: 44px; height: 42px; padding: 2px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); }
 .catedit .x, .catedit .lock { width: 40px; text-align: center; font-size: 16px; }
+.tpls { display: flex; gap: 6px; flex-wrap: wrap; }
+.tpls button { background: var(--brand-soft); color: var(--brand); font-weight: 600; font-size: 13px; padding: 8px 12px; border-radius: 99px; }
