@@ -28,6 +28,13 @@ Your data is stored in your browser (localStorage). Use Backup -> Export to save
 - Import validates every goal and log, reports what it skipped, and still accepts Phase 1 backups.
 - New goal form: pick **Daily habit** or a **Custom** target (count or amount), or start from a quick template.
 
+## Boards, tasks and plans (new)
+- **Boards tab**: several boards (Health, Wealth, Work & Skills, Self & Mind, your own...). Each has To do / Doing / Done, due dates, minutes, priorities and ★ focus.
+- **Focus today**: pick the tasks you want to finish today. Quick "anonymous" tasks need no board: type one and it goes to the **Inbox**, already focused. Focus also shows on the Today tab.
+- **Import plan**: Boards > Import plan / tasks > "Load the 60-day master plan" adds 4 boards, 240 dated tasks and 10 starter habits. Or import your own `.json` / `.csv` (see `docs/plan-format.md`; samples in `plans/`).
+- Each board can show its **related habits** (goals from a category) so you can log them without leaving the board.
+- Backup > Export tasks (CSV) and the full JSON backup include boards and tasks.
+
 ## MCP server (connect an AI / Ollama)
 See `mcp-server/README.md`. It reads and writes the same JSON file the app exports/imports.
 

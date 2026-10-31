@@ -18,10 +18,14 @@ const noop = new Proxy(function () {}, {
 const ctx = {
   Date: FixedDate, console, setTimeout, clearTimeout, URL, Blob,
   localStorage: { getItem: () => null, setItem() {} },
-  navigator: {}, location: { protocol: "http:" }, confirm: () => true, window: noop,
+  navigator: {}, location: { protocol: "http:" }, confirm: () => true, addEventListener() {}, scrollTo() {},
   document: { querySelector: () => noop, querySelectorAll: () => [], addEventListener() {}, body: noop, createElement: () => noop, hidden: false },
 };
+ctx.window = ctx;
 vm.createContext(ctx);
+const dir = require("path").dirname(appPath);
+const boardsPath = require("path").join(dir, "boards.js");
+if (fs.existsSync(boardsPath)) vm.runInContext(fs.readFileSync(boardsPath, "utf8"), ctx);   // app.js uses window.Boards
 vm.runInContext(fs.readFileSync(appPath, "utf8"), ctx);
 const text = fs.readFileSync(dataPath, "utf8");
 const out = vm.runInContext(

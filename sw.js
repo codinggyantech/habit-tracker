@@ -1,6 +1,6 @@
 // Network-first service worker: always tries fresh files, falls back to cache when offline.
-const CACHE = "habit-tracker-v1";
-const FILES = ["./", "index.html", "style.css", "app.js", "manifest.webmanifest", "icon.svg"];
+const CACHE = "habit-tracker-v2";
+const FILES = ["./", "index.html", "style.css", "app.js", "boards.js", "plans/builtin-plan.js", "manifest.webmanifest", "icon.svg"];
 
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)));

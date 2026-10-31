@@ -1,4 +1,4 @@
-# Habit Tracker data format (schemaVersion 2)
+# Habit Tracker data format (schemaVersion 3)
 
 This is the one standard used by the app's **Export / Import**, and by the **MCP server**.
 A machine-readable version is in `habit-data.schema.json`.
@@ -7,13 +7,16 @@ A machine-readable version is in `habit-data.schema.json`.
 ```json
 {
   "app": "habit-tracker",
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "exportedAt": "2026-10-31T15:30:00.000Z",
   "today": "2026-10-31",
   "categories": [ { "id": "health", "label": "Health", "icon": "💪", "color": "#16a34a" } ],
   "settings": { "sort": "priority", "group": "category" },
   "goals": [ { "...": "see below" } ],
-  "logs":  [ { "id": "ab12", "goalId": "g1", "date": "2026-10-31", "amount": 20, "ts": 1793460000000 } ]
+  "logs":  [ { "id": "ab12", "goalId": "g1", "date": "2026-10-31", "amount": 20, "ts": 1793460000000 } ],
+  "boards": [ { "id": "inbox", "name": "Inbox", "icon": "📥", "color": "#64748b", "category": "" } ],
+  "tasks":  [ { "id": "t1", "boardId": "inbox", "title": "Call the electrician", "status": "todo", "priority": "medium",
+                "due": "", "minutes": 0, "focus": "2026-10-31", "notes": "", "createdAt": 1793460000000, "doneAt": "" } ]
 }
 ```
 
@@ -43,8 +46,28 @@ A machine-readable version is in `habit-data.schema.json`.
 `{ "id", "goalId", "date": "YYYY-MM-DD", "amount": number > 0, "ts": epoch-millis }`.
 For `daily` goals, any amount > 0 on a date means "done that day".
 
+## A board and a task (new in version 3)
+A **board** groups tasks (Health, Wealth, Home...). The **Inbox** board always exists and holds quick "anonymous" tasks.
+`{ id, name (max 30), icon, color (#rrggbb), category }` - `category` optionally links the board to a habit category so its habits show on the board.
+
+A **task**:
+| Field | Rules |
+|---|---|
+| `id` | unique; made for you if missing |
+| `boardId` | an existing board id; unknown ids fall back to `inbox` |
+| `title` | required, max 120 chars |
+| `status` | `todo` \| `doing` \| `done` (default `todo`) |
+| `priority` | `high` \| `medium` \| `low` (default `medium`) |
+| `due` | `YYYY-MM-DD` or empty |
+| `minutes` | 0-1440 |
+| `focus` | a date; the task is in "Focus today" when it equals today |
+| `notes` | max 500 chars |
+| `createdAt`, `doneAt` | epoch millis / date; filled in for you |
+
+Plan files (JSON or CSV) that create boards and tasks are described in `plan-format.md`.
+
 ## Import rules
-- The file must have `goals` and `logs` arrays. Files from Phase 1 (no `schemaVersion`, fields `cat`/`vis`) still import.
+- The file must have `goals` and `logs` arrays (`boards` and `tasks` are optional). Files from Phase 1 and version 2 (no `schemaVersion`, fields `cat`/`vis`) still import.
 - Every goal and log is validated. Invalid ones are **skipped and reported** before you confirm.
 - A file with a newer `schemaVersion` than the app understands is refused.
 - Importing **replaces** the data in the app.

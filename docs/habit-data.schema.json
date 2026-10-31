@@ -1,57 +1,170 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "Habit Tracker data (schemaVersion 2)",
+  "title": "Habit Tracker data (schemaVersion 3)",
   "type": "object",
-  "required": ["goals", "logs"],
+  "required": [
+    "goals",
+    "logs"
+  ],
   "properties": {
-    "app": { "const": "habit-tracker" },
-    "schemaVersion": { "type": "integer", "minimum": 1, "maximum": 2 },
-    "exportedAt": { "type": "string" },
-    "today": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "app": {
+      "const": "habit-tracker"
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3
+    },
+    "exportedAt": {
+      "type": "string"
+    },
+    "today": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+    },
     "categories": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "label"],
+        "required": [
+          "id",
+          "label"
+        ],
         "properties": {
-          "id": { "type": "string", "minLength": 1 },
-          "label": { "type": "string", "maxLength": 24 },
-          "icon": { "type": "string" },
-          "color": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" }
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 24
+          },
+          "icon": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string",
+            "pattern": "^#[0-9a-fA-F]{6}$"
+          }
         }
       }
     },
     "settings": {
       "type": "object",
       "properties": {
-        "sort": { "enum": ["priority", "manual"] },
-        "group": { "enum": ["category", "priority"] }
+        "sort": {
+          "enum": [
+            "priority",
+            "manual"
+          ]
+        },
+        "group": {
+          "enum": [
+            "category",
+            "priority"
+          ]
+        }
       }
     },
     "goals": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["name", "type", "days", "start"],
+        "required": [
+          "name",
+          "type",
+          "days",
+          "start"
+        ],
         "properties": {
-          "id": { "type": "string" },
-          "name": { "type": "string", "minLength": 1, "maxLength": 60 },
-          "type": { "enum": ["daily", "times", "total"] },
-          "target": { "type": "number", "minimum": 0 },
-          "unit": { "type": "string", "maxLength": 20 },
-          "step": { "type": "number", "exclusiveMinimum": 0 },
-          "days": { "type": "integer", "minimum": 1, "maximum": 730 },
-          "start": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
-          "end": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$", "description": "calculated, ignored on import" },
-          "category": { "type": "string" },
-          "priority": { "enum": ["high", "medium", "low"] },
-          "visibility": { "enum": ["private", "public"] },
-          "icon": { "type": "string" },
-          "summary": { "type": "object", "description": "calculated, ignored on import" }
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "type": {
+            "enum": [
+              "daily",
+              "times",
+              "total"
+            ]
+          },
+          "target": {
+            "type": "number",
+            "minimum": 0
+          },
+          "unit": {
+            "type": "string",
+            "maxLength": 20
+          },
+          "step": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "days": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 730
+          },
+          "start": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "end": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+            "description": "calculated, ignored on import"
+          },
+          "category": {
+            "type": "string"
+          },
+          "priority": {
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "visibility": {
+            "enum": [
+              "private",
+              "public"
+            ]
+          },
+          "icon": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "object",
+            "description": "calculated, ignored on import"
+          }
         },
         "allOf": [
-          { "if": { "properties": { "type": { "enum": ["times", "total"] } } },
-            "then": { "required": ["target"], "properties": { "target": { "exclusiveMinimum": 0 } } } }
+          {
+            "if": {
+              "properties": {
+                "type": {
+                  "enum": [
+                    "times",
+                    "total"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "target"
+              ],
+              "properties": {
+                "target": {
+                  "exclusiveMinimum": 0
+                }
+              }
+            }
+          }
         ]
       }
     },
@@ -59,13 +172,117 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["goalId", "date", "amount"],
+        "required": [
+          "goalId",
+          "date",
+          "amount"
+        ],
         "properties": {
-          "id": { "type": "string" },
-          "goalId": { "type": "string" },
-          "date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
-          "amount": { "type": "number", "exclusiveMinimum": 0 },
-          "ts": { "type": "number" }
+          "id": {
+            "type": "string"
+          },
+          "goalId": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "amount": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "ts": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "boards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 30
+          },
+          "icon": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string",
+            "pattern": "^#[0-9a-fA-F]{6}$"
+          },
+          "category": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "title"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "boardId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "status": {
+            "enum": [
+              "todo",
+              "doing",
+              "done"
+            ]
+          },
+          "priority": {
+            "enum": [
+              "high",
+              "medium",
+              "low"
+            ]
+          },
+          "due": {
+            "type": "string",
+            "pattern": "^(\\d{4}-\\d{2}-\\d{2})?$"
+          },
+          "minutes": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1440
+          },
+          "focus": {
+            "type": "string",
+            "pattern": "^(\\d{4}-\\d{2}-\\d{2})?$"
+          },
+          "notes": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "createdAt": {
+            "type": "number"
+          },
+          "doneAt": {
+            "type": "string"
+          }
         }
       }
     }

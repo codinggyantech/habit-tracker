@@ -74,12 +74,27 @@ class CoreTests(unittest.TestCase):
         self.store.create_goal(name="Walk", kind="daily", days=30)
         self.assertTrue(self.path.exists())
         raw = json.loads(self.path.read_text())
-        self.assertEqual(raw["schemaVersion"], 2); self.assertEqual(raw["goals"][0]["category"], "other")
+        self.assertEqual(raw["schemaVersion"], 3); self.assertEqual(raw["goals"][0]["category"], "other")
         self.assertIn("summary", raw["goals"][0])
 
     def test_create_goal_defaults_start_to_today_even_when_none_is_passed(self):
         g = self.store.create_goal(name="Walk", kind="daily", days=30, start=None)   # AI clients send null for omitted args
         self.assertEqual(g["start"], TODAY.isoformat())
+
+    def test_boards_and_tasks_survive_a_server_write(self):
+        """The web app's boards/tasks must be written back untouched when the AI changes a habit."""
+        sample_file(self.path)
+        raw = json.loads(self.path.read_text())
+        raw["boards"] = [{"id": "inbox", "name": "Inbox", "icon": "📥", "color": "#64748b", "category": ""},
+                         {"id": "b1", "name": "Health", "icon": "💪", "color": "#16a34a", "category": "health"}]
+        raw["tasks"] = [{"id": "t1", "boardId": "b1", "title": "Baseline test", "status": "done", "priority": "high",
+                         "due": "2026-11-01", "minutes": 45, "focus": "", "createdAt": 1, "doneAt": "2026-11-01", "notes": ""}]
+        self.path.write_text(json.dumps(raw))
+        self.store.log_progress("Workouts")                      # makes the server rewrite the file
+        after = json.loads(self.path.read_text())
+        self.assertEqual(after["schemaVersion"], 3)
+        self.assertEqual(after["boards"], raw["boards"])
+        self.assertEqual(after["tasks"], raw["tasks"])
 
     def test_phase1_file_loads(self):
         v1 = {"goals": [{"id": "a", "name": "Old", "type": "daily", "days": 30, "start": d(3), "cat": "health", "vis": "public", "icon": "x"}],

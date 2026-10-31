@@ -25,11 +25,9 @@ const TYPES = {
   times: "🔢 Custom: count",
   total: "📏 Custom: amount",
 };
-const SCHEMA_VERSION = 2;   // version of the export/import file format (see docs/data-format.md)
+const SCHEMA_VERSION = 3;   // version of the export/import file format (see docs/data-format.md)
 
 // ---------------------------------------------------------------- state
-let state = loadState();
-rebuildCats();
 let tab = "today";
 let openDetailId = null;
 
@@ -46,14 +44,19 @@ function normalize(s) {
     if (!PRIORITIES[g.priority]) g.priority = "medium";
     if (!out.categories.some((c) => c.id === g.cat)) g.cat = "other";
   }
+  const catMap = Object.fromEntries(out.categories.map((c) => [c.id, c]));
+  const bt = window.Boards ? window.Boards.normalize(s.boards, s.tasks, catMap) : { boards: [], tasks: [] };
+  out.boards = bt.boards; out.tasks = bt.tasks;
   return out;
 }
 function rebuildCats() { CATEGORIES = {}; state.categories.forEach((c) => { CATEGORIES[c.id] = c; }); }
 function loadState() {
+  const text = localStorage.getItem(STORE_KEY);
   try {
-    const s = JSON.parse(localStorage.getItem(STORE_KEY));
+    const s = JSON.parse(text);
     if (s && Array.isArray(s.goals) && Array.isArray(s.logs)) return normalize(s);
-  } catch (e) { /* ignore */ }
+  } catch (e) { console.error("Could not read saved data", e); }
+  if (text) { try { localStorage.setItem(STORE_KEY + ".unreadable", text); } catch (e) { /* storage full */ } }   // keep a copy; never lose data silently
   return normalize({});
 }
 function save() { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
@@ -71,6 +74,10 @@ const fmt = (n) => (Number.isInteger(n) ? String(n) : String(Math.round(n * 10) 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const $ = (sel, el = document) => el.querySelector(sel);
 const $$ = (sel, el = document) => [...el.querySelectorAll(sel)];
+
+// Load saved data last among the helpers: loading validates boards/tasks/goals and needs the date + id helpers above.
+let state = loadState();
+rebuildCats();
 
 // ---------------------------------------------------------------- goal maths
 function goalStats(g) {
@@ -170,7 +177,7 @@ function makeLog(raw, goalIds) {
   return { log: { id: raw.id || uid(), goalId: raw.goalId, date: raw.date, amount, ts: Number(raw.ts) || Date.now() } };
 }
 
-// Everything the app knows, in the standard v2 file format. "summary" is calculated and ignored on import.
+// Everything the app knows, in the standard v3 file format (goals, logs, boards and tasks). "summary" is calculated and ignored on import.
 function exportPayload() {
   return {
     app: "habit-tracker", schemaVersion: SCHEMA_VERSION, exportedAt: new Date().toISOString(), today: todayStr(),
@@ -187,10 +194,13 @@ function exportPayload() {
     }),
     logs: state.logs.map((l) => ({ id: l.id, goalId: l.goalId, date: l.date, amount: l.amount, ts: l.ts }))
       .sort((a, b) => a.date.localeCompare(b.date) || a.ts - b.ts),
+    boards: state.boards.map((b) => ({ id: b.id, name: b.name, icon: b.icon, color: b.color, category: b.cat })),
+    tasks: state.tasks.map((t) => ({ id: t.id, boardId: t.boardId, title: t.title, notes: t.notes, status: t.status, priority: t.priority,
+      due: t.due, minutes: t.minutes, focus: t.focus, createdAt: t.createdAt, doneAt: t.doneAt })),
   };
 }
 
-// Reads a backup file (v1 from Phase 1 or v2), validates every goal and log, and reports what was skipped.
+// Reads a backup file (v1 from Phase 1, v2 or v3 with boards and tasks), validates every goal and log, and reports what was skipped.
 function parseImport(text) {
   let raw;
   try { raw = JSON.parse(text); } catch (e) { throw new Error("the file is not valid JSON"); }
@@ -214,7 +224,10 @@ function parseImport(text) {
   let badLogs = 0;
   for (const l of raw.logs) { const res = makeLog(l || {}, ids); if (res.log) logs.push(res.log); else badLogs++; }
   if (badLogs) warnings.push(`${badLogs} log entries skipped (unknown goal, bad date or amount)`);
-  return { state: normalize({ goals, logs, categories: base.categories, settings: base.settings }), warnings };
+  const rawTasks = Array.isArray(raw.tasks) ? raw.tasks.length : 0;
+  const next = normalize({ goals, logs, categories: base.categories, settings: base.settings, boards: raw.boards, tasks: raw.tasks });
+  if (rawTasks > next.tasks.length) warnings.push(`${rawTasks - next.tasks.length} tasks skipped (missing title)`);
+  return { state: next, warnings };
 }
 
 const csvCell = (v) => (typeof v === "number" ? String(v) : `"${String(v).replace(/"/g, '""')}"`);
@@ -295,8 +308,9 @@ const view = $("#view"), titleEl = $("#title");
 
 function render() {
   $$(".tab").forEach((b) => b.classList.toggle("active", b.dataset.tab === tab));
-  titleEl.textContent = { today: "Today", goals: "My goals", insights: "Insights", backup: "Backup" }[tab];
-  view.innerHTML = { today: renderToday, goals: renderGoals, insights: renderInsights, backup: renderBackup }[tab]();
+  titleEl.textContent = { today: "Today", goals: "My goals", boards: "Boards", insights: "Insights", backup: "Backup" }[tab];
+  view.innerHTML = { today: renderToday, goals: renderGoals, boards: () => window.Boards.renderView(), insights: renderInsights, backup: renderBackup }[tab]();
+  view.classList.toggle("wide", tab === "boards" && window.Boards.isDetail());
   if (openDetailId) refreshDetail();
 }
 
@@ -356,14 +370,15 @@ function viewControls() {
 }
 
 function renderToday() {
-  if (!state.goals.length) return emptyState();
+  if (!state.goals.length && !state.tasks.length) return emptyState();
   const act = state.goals.filter((g) => isActive(g));
   const touched = act.filter((g) => goalStats(g).todayAmt > 0).length;
   const d = new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
   let html = `<div class="card banner"><h2>${d}</h2>
     <p>${act.length ? `${touched} of ${act.length} goals logged today` : "No active goals today"}</p>
     <div class="bar"><i style="width:${act.length ? (touched / act.length) * 100 : 0}%"></i></div></div>`;
-  html += viewControls();
+  html += window.Boards.focusBlock(true);
+  if (state.goals.length) html += viewControls();
   const groups = state.settings.group === "priority"
     ? Object.entries(PRIORITIES).map(([k, p]) => [`${p.icon} ${p.label} priority`, act.filter((g) => g.priority === k)])
     : Object.values(CATEGORIES).map((c) => [`${c.icon} ${esc(c.label)}`, act.filter((g) => g.cat === c.id)]);
@@ -456,7 +471,8 @@ function renderInsights() {
       <div class="stat"><b>${behind}</b><span>goals behind pace</span></div></div></div>
     <div class="card"><h3 class="h">Goals logged per day (last 14 days)</h3><div class="bars">${bars}</div></div>
     <div class="card"><h3 class="h">Average progress by category</h3>${cats}</div>
-    <div class="card"><h3 class="h">Average progress by priority</h3>${prios}</div>`;
+    <div class="card"><h3 class="h">Average progress by priority</h3>${prios}</div>
+    ${window.Boards.insightsCard()}`;
 }
 
 function renderBackup() {
@@ -465,13 +481,16 @@ function renderBackup() {
     <div class="btn-row"><button class="btn-primary" data-act="export">⬇ Export backup (JSON)</button>
     <button class="btn-ghost" data-act="exportcsv">📄 Export logs (CSV)</button>
     <label class="btn-ghost" style="text-align:center;cursor:pointer">⬆ Import backup<input id="importFile" type="file" accept="application/json" hidden></label></div></div>
+    <div class="card"><h3 class="h">Plans and tasks</h3>
+    <p class="hint">Import a plan (JSON or a CSV spreadsheet) into your Boards, or export your tasks to a spreadsheet. Plan files are in the <code>plans</code> folder.</p>
+    <div class="btn-row">${window.Boards.backupButtons()}</div></div>
     <div class="card"><h3 class="h">Try it out</h3>
     <p class="hint">Loads 4 sample goals with some history so you can see the charts. It adds to your data; it does not replace it.</p>
     <div class="btn-row"><button class="btn-ghost" data-act="sample">Load sample data</button></div></div>
     <div class="card"><h3 class="h">Danger zone</h3>
-    <p class="hint">Deletes all goals and logs from this device. Export first if unsure.</p>
+    <p class="hint">Deletes all goals, logs, boards and tasks from this device. Export first if unsure.</p>
     <div class="btn-row"><button class="btn-danger" data-act="wipe">Delete everything</button></div></div>
-    <p class="hint" style="text-align:center">Phase 1 · solo mode · ${state.goals.length} goals · ${state.logs.length} logs</p>`;
+    <p class="hint" style="text-align:center">Phase 1 · solo mode · ${state.goals.length} goals · ${state.logs.length} logs · ${state.tasks.length} tasks</p>`;
 }
 
 // ---------------------------------------------------------------- sheet (modal)
@@ -677,7 +696,10 @@ function logAndToast(id, amount, date) {
 
 document.addEventListener("click", (e) => {
   const tabBtn = e.target.closest("[data-tab]");
-  if (tabBtn) { tab = tabBtn.dataset.tab; render(); window.scrollTo(0, 0); return; }
+  if (tabBtn) {
+    if (tabBtn.dataset.tab === "boards" && tab === "boards") window.Boards.resetView();   // tapping Boards again goes back to the overview
+    tab = tabBtn.dataset.tab; render(); window.scrollTo(0, 0); return;
+  }
   const el = e.target.closest("[data-act]"); if (!el) return;
   const id = el.dataset.id;
   switch (el.dataset.act) {
@@ -732,6 +754,7 @@ document.addEventListener("click", (e) => {
     }
     case "export": exportData(); break;
     case "exportcsv": exportCsv(); break;
+    case "exporttasks": download(`habit-tracker-tasks-${todayStr()}.csv`, window.Boards.tasksCsv(), "text/csv"); toast("Tasks CSV downloaded"); break;
     case "sample": loadSample(); break;
     case "wipe":
       if (confirm("Delete ALL goals and logs on this device? This cannot be undone.")) { state = normalize({}); rebuildCats(); save(); render(); toast("Everything deleted"); }

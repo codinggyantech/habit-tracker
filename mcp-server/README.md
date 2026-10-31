@@ -46,6 +46,9 @@ after you change things in the app, **export again** so the AI sees them. Import
 Things it will refuse (with a clear message): unknown or ambiguous goal names, logging in the future or before a goal's start,
 a second "done" for a daily goal on the same day, invalid goals (same rules as the web app).
 
+Boards and tasks created in the web app are kept intact: the server does not edit them, but it writes them back unchanged
+whenever it saves, so an AI logging a habit never deletes your boards. (Task tools for the AI could be added later.)
+
 ## 4. Check that it works
 ```bash
 ./.venv/bin/python -m unittest discover -s tests -v    # unit tests, including a parity test against the real app.js

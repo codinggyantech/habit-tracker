@@ -15,7 +15,7 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Optional
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 TYPES = ("daily", "times", "total")
 PRIORITIES = {"high": 0, "medium": 1, "low": 2}
 VISIBILITIES = ("private", "public")
@@ -86,7 +86,11 @@ def normalize_store(raw: dict) -> dict:
             logs.append(log)
     settings = {"sort": "priority", "group": "category"}
     settings.update(raw.get("settings") or {})
-    return {"categories": cats, "settings": settings, "goals": goals, "logs": logs}
+    # Boards and tasks belong to the web app. We do not edit them, but we must write them back unchanged,
+    # otherwise an AI logging a habit would silently delete the user's boards.
+    boards = [b for b in (raw.get("boards") or []) if isinstance(b, dict)]
+    tasks = [t for t in (raw.get("tasks") or []) if isinstance(t, dict)]
+    return {"categories": cats, "settings": settings, "goals": goals, "logs": logs, "boards": boards, "tasks": tasks}
 
 
 def make_goal(raw: dict, cat_ids: set, today: Optional[date] = None) -> tuple[Optional[dict], list[str]]:
@@ -247,6 +251,8 @@ class Store:
             "goals": [dict(g, end=(date.fromisoformat(g["start"]) + timedelta(days=g["days"] - 1)).isoformat(),
                            summary=self._summary(g, store["logs"])) for g in store["goals"]],
             "logs": sorted(store["logs"], key=lambda l: (l["date"], l["ts"])),
+            "boards": store.get("boards", []),
+            "tasks": store.get("tasks", []),
         }
         self.path.parent.mkdir(parents=True, exist_ok=True)
         if self.path.exists():

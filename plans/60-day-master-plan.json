@@ -1,0 +1,1575 @@
+{
+  "app": "habit-tracker",
+  "type": "plan",
+  "schemaVersion": 1,
+  "name": "60-Day Master Plan",
+  "description": "240 tasks across Health, Work & Skills, Wealth and Self, sized for a Mon-Fri 9-7 job. Day 1 is a Sunday.",
+  "startDate": "2026-11-01",
+  "boards": [
+    {
+      "key": "health",
+      "name": "Health",
+      "icon": "💪",
+      "color": "#16a34a",
+      "category": "health",
+      "tasks": [
+        {
+          "day": 1,
+          "title": "Baseline test: max push-ups, 1-min plank, 1 km walk time, weight and waist. Log them",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 2,
+          "title": "30-min brisk walk + 10 push-ups",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 3,
+          "title": "Bodyweight circuit x3 (squats, push-ups, plank)",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 4,
+          "title": "30-min walk or cycle + 10 min stretching",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 5,
+          "title": "Bodyweight circuit x3 + 15 push-ups",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 6,
+          "title": "Easy 30-min walk; prep healthy food for the weekend",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 7,
+          "title": "60-min long walk or hike; plan next week's workouts and meals",
+          "minutes": 60,
+          "priority": "high"
+        },
+        {
+          "day": 8,
+          "title": "Meal-prep 3 simple healthy meals; set a bedtime alarm (7+ hours sleep)",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 9,
+          "title": "Circuit x3 + 25 push-ups total today",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 10,
+          "title": "35-min walk/jog intervals (1 min fast, 2 min easy)",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 11,
+          "title": "Strength: squats, lunges, push-ups, plank x3 rounds",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 12,
+          "title": "Mobility or yoga 30 min + 20 push-ups",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 13,
+          "title": "Interval walk/jog 35 min",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 14,
+          "title": "60-min cardio of your choice (cycle, swim, jog) + 40 push-ups spread out",
+          "minutes": 60,
+          "priority": "high"
+        },
+        {
+          "day": 15,
+          "title": "Check the week: total push-ups, average sleep, water habit. Adjust the plan",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 16,
+          "title": "Strength A: push-ups 4x8, squats 4x15, plank 3x40s",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 17,
+          "title": "40-min easy cardio (you can still talk)",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 18,
+          "title": "Strength B: lunges, pike push-ups, glute bridges, dead bugs",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 19,
+          "title": "Mobility 30 min (hips, shoulders, back)",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 20,
+          "title": "Strength A again, add 1 rep per set",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 21,
+          "title": "60-min active day: hike, sport or cycle with friends",
+          "minutes": 60,
+          "priority": "high"
+        },
+        {
+          "day": 22,
+          "title": "Meal-prep; start a no-sugary-drinks challenge",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 23,
+          "title": "4 x 4-min hard intervals after a 10-min warm-up",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 24,
+          "title": "Strength A + 20 push-ups",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 25,
+          "title": "40-min easy cardio",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 26,
+          "title": "Strength B",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 27,
+          "title": "Easy 30-min walk + stretching",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 28,
+          "title": "60-min long run/ride/hike; measure waist and weight",
+          "minutes": 60,
+          "priority": "high"
+        },
+        {
+          "day": 29,
+          "title": "Review last week's food; pick 2 changes (more protein, more veg)",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 30,
+          "title": "Strength A, add 1 set",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 31,
+          "title": "30-min yoga or mobility flow",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 32,
+          "title": "30-min intervals",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 33,
+          "title": "Strength B, add 1 set",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 34,
+          "title": "40-min walk while calling a friend",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 35,
+          "title": "60-min sport or hike; try one new healthy recipe",
+          "minutes": 60,
+          "priority": "high"
+        },
+        {
+          "day": 36,
+          "title": "Push-up test again; compare with your Day 1 baseline",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 37,
+          "title": "Strength A with slow tempo (3 seconds down)",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 38,
+          "title": "45-min easy cardio",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 39,
+          "title": "Strength B + 5-min core finisher",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 40,
+          "title": "4 x 4-min intervals",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 41,
+          "title": "Mobility 30 min",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 42,
+          "title": "60-min challenge circuit for time; log your time",
+          "minutes": 60,
+          "priority": "high"
+        },
+        {
+          "day": 43,
+          "title": "Plan the holiday season: travel, treats, and a minimum-workout rule",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 44,
+          "title": "Strength A: try a new rep record",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 45,
+          "title": "40-min cardio",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 46,
+          "title": "Strength B",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 47,
+          "title": "Mobility 30 min",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 48,
+          "title": "30-min intervals",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 49,
+          "title": "60-min long outdoor session",
+          "minutes": 60,
+          "priority": "high"
+        },
+        {
+          "day": 50,
+          "title": "Meal-prep; book a yearly health check-up if one is due",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 51,
+          "title": "Strength A",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 52,
+          "title": "40-min cardio",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 53,
+          "title": "Strength B",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 54,
+          "title": "Mobility or yoga 30 min",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 55,
+          "title": "Easy 30-min walk",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 56,
+          "title": "60-min fun activity; final measurements (weight, waist, push-up max, plank)",
+          "minutes": 60,
+          "priority": "high"
+        },
+        {
+          "day": 57,
+          "title": "Compare Day 1 with now; write 5 health wins and 2 habits to keep in 2027",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 58,
+          "title": "30-min strength circuit",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 59,
+          "title": "40-min walk or jog",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 60,
+          "title": "Set 2027 health goals (e.g. 5 km run, 1000 push-ups) and add them to the habit tracker",
+          "minutes": 45,
+          "priority": "medium"
+        }
+      ]
+    },
+    {
+      "key": "work",
+      "name": "Work & Skills",
+      "icon": "🚀",
+      "color": "#0284c7",
+      "category": "learning",
+      "tasks": [
+        {
+          "day": 1,
+          "title": "Review this plan; list what you want from AI skills; create a learning-notes file",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 2,
+          "title": "Course module: LLM basics (tokens, context window, temperature)",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 3,
+          "title": "Bedrock playground: compare 2 models on 3 tasks; note quality, speed, cost",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 4,
+          "title": "AWS safety setup: IAM user, MFA, budget alert, CLI working (guide Phase 0)",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 5,
+          "title": "Prompt practice: system prompts, examples, JSON output",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 6,
+          "title": "Call Bedrock from Python (Converse): your first script",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 7,
+          "title": "Build the local agent loop with 1 tool (guide Phase 1); write what each step does",
+          "minutes": 150,
+          "priority": "high"
+        },
+        {
+          "day": 8,
+          "title": "Re-read your agent code; write a 1-page explanation in your own words",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 9,
+          "title": "Add tools #2 and #3 to the agent (file read, web call)",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 10,
+          "title": "Add error handling, retries and a step limit",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 11,
+          "title": "Course module: tool use and agents",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 12,
+          "title": "Wrap the agent in FastAPI (/ask, /health) and test with curl",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 13,
+          "title": "Write 10 test questions for the agent and record the results",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 14,
+          "title": "Containerize: Dockerfile, build, run locally (guide Phase 2); commit to Git",
+          "minutes": 150,
+          "priority": "high"
+        },
+        {
+          "day": 15,
+          "title": "Read docs/data-format.md; list what the MCP server can do",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 16,
+          "title": "Run the MCP server tests and tests/e2e_stdio.py",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 17,
+          "title": "Install an Ollama model that supports tool calling; test a plain chat",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 18,
+          "title": "Connect the MCP server to ollmcp or Open WebUI; log one habit by chat",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 19,
+          "title": "Improve a tool description; test 5 prompts and note failures",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 20,
+          "title": "Write a short demo README: AI + habit tracker flow",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 21,
+          "title": "Review your feature branches, fix issues, and merge to develop when you are happy",
+          "minutes": 150,
+          "priority": "high"
+        },
+        {
+          "day": 22,
+          "title": "Explain in your own words: execution role vs task role vs GitHub role",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 23,
+          "title": "Create the ECR repo and push your image (guide Phase 3.1)",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 24,
+          "title": "Create IAM roles and the SSM secret (guide 3.2 to 3.5)",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 25,
+          "title": "ECS cluster + task definition (guide 4.1 to 4.2)",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 26,
+          "title": "Create the service with a public IP; test /health",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 27,
+          "title": "Debug with CloudWatch logs; fix any failures",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 28,
+          "title": "End to end: agent on ECS calls Bedrock; test 5 questions; note the cost",
+          "minutes": 150,
+          "priority": "high"
+        },
+        {
+          "day": 29,
+          "title": "Study the GitHub OIDC trust policy; note why no AWS keys are stored",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 30,
+          "title": "Create the OIDC provider and githubDeployRole (guide Phase 5.1-5.2)",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 31,
+          "title": "Write the GitHub Actions workflow (build, push, deploy)",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 32,
+          "title": "Push a change; watch the pipeline; fix issues",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 33,
+          "title": "Move secrets to SSM properly; test changing one",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 34,
+          "title": "Add basic monitoring: check logs and set one CloudWatch alarm",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 35,
+          "title": "Add one real tool (S3 or DynamoDB) with least-privilege permissions",
+          "minutes": 150,
+          "priority": "high"
+        },
+        {
+          "day": 36,
+          "title": "Learn embeddings, chunking and vector search basics",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 37,
+          "title": "Course module: RAG",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 38,
+          "title": "Collect 5-10 non-confidential documents into S3",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 39,
+          "title": "Create a Bedrock Knowledge Base",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 40,
+          "title": "Query it from your agent",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 41,
+          "title": "Evaluate: 15 questions, mark right/wrong",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 42,
+          "title": "Improve chunking and prompt; compare before and after",
+          "minutes": 150,
+          "priority": "high"
+        },
+        {
+          "day": 43,
+          "title": "Review risks: prompt injection, permissions, cost",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 44,
+          "title": "Add a Bedrock Guardrail; test 5 bad prompts",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 45,
+          "title": "Build an eval set of 30 questions and a script that runs it",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 46,
+          "title": "Log tool calls, tokens and cost for every request",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 47,
+          "title": "Add a human-approval step for a risky tool",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 48,
+          "title": "Cut cost: smaller model for easy tasks, check prompt caching",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 49,
+          "title": "Run the evals; fix the top 3 failures",
+          "minutes": 150,
+          "priority": "high"
+        },
+        {
+          "day": 50,
+          "title": "Pick your capstone scope; define 'done' in 5 bullets",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 51,
+          "title": "Capstone: build feature 1",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 52,
+          "title": "Capstone: build feature 2",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 53,
+          "title": "Capstone: tests and bug fixes",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 54,
+          "title": "Write the README with an architecture diagram",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 55,
+          "title": "Record a 3-minute demo video",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 56,
+          "title": "Publish the repo; write a LinkedIn or blog post; update your profile/CV",
+          "minutes": 150,
+          "priority": "high"
+        },
+        {
+          "day": 57,
+          "title": "Review the Skills sheet; update every progress %",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 58,
+          "title": "Plan 2027 learning: a certification (e.g. AWS AI Practitioner) or a course",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 59,
+          "title": "Book the exam or choose your next course",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 60,
+          "title": "Write 2027 career goals and 3 project ideas",
+          "minutes": 60,
+          "priority": "medium"
+        }
+      ]
+    },
+    {
+      "key": "wealth",
+      "name": "Wealth",
+      "icon": "💰",
+      "color": "#ca8a04",
+      "category": "wealth",
+      "tasks": [
+        {
+          "day": 1,
+          "title": "Money snapshot: list income, accounts, debts, subscriptions (a net-worth view)",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 2,
+          "title": "Track yesterday's spending and categorise it",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 3,
+          "title": "Cancel or pause one unused subscription",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 4,
+          "title": "Draft a monthly budget (needs, wants, savings)",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 5,
+          "title": "Check your emergency fund: how many months of expenses?",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 6,
+          "title": "Review your employer's benefits (savings plans, insurance)",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 7,
+          "title": "Write your 2027 money goals (save X, learn Y, earn Z)",
+          "minutes": 60,
+          "priority": "high"
+        },
+        {
+          "day": 8,
+          "title": "Weekly money review; plan this week's spending",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 9,
+          "title": "Set up an automatic savings transfer on payday",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 10,
+          "title": "Learn: how compound interest works (one article)",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 11,
+          "title": "Track and categorise spending",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 12,
+          "title": "Check basic insurance cover (health, life)",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 13,
+          "title": "Learn: index-fund basics (education only)",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 14,
+          "title": "List 10 problems or skills where you could help others (income ideas)",
+          "minutes": 60,
+          "priority": "high"
+        },
+        {
+          "day": 15,
+          "title": "Weekly money review",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 16,
+          "title": "Research: find 5 people asking for help on AI/AWS (Reddit, LinkedIn)",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 17,
+          "title": "Choose a niche; write a one-sentence offer",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 18,
+          "title": "Talk to 2 people about the problem they have",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 19,
+          "title": "Check your employer's rules on side income and IP; write down the conclusion",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 20,
+          "title": "Outline a first small product (starter kit, template or mini-guide)",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 21,
+          "title": "Decide the product and a price; list what is needed to finish it",
+          "minutes": 60,
+          "priority": "high"
+        },
+        {
+          "day": 22,
+          "title": "Weekly money review",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 23,
+          "title": "Draft the product outline (sections)",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 24,
+          "title": "Create pages 1-3",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 25,
+          "title": "Create pages 4-6",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 26,
+          "title": "Add examples and screenshots",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 27,
+          "title": "Proofread and format",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 28,
+          "title": "Set up Gumroad or Lemon Squeezy and a draft product page",
+          "minutes": 60,
+          "priority": "high"
+        },
+        {
+          "day": 29,
+          "title": "Weekly money review; plan the launch week",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 30,
+          "title": "Write the description and 3 benefits",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 31,
+          "title": "Make a free sample (one chapter or checklist)",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 32,
+          "title": "Ask 3 friends to review the product",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 33,
+          "title": "Fix the feedback",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 34,
+          "title": "Schedule your launch posts",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 35,
+          "title": "Soft launch: publish the product and post on LinkedIn",
+          "minutes": 60,
+          "priority": "high"
+        },
+        {
+          "day": 36,
+          "title": "Review views, messages and sales; note what worked",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 37,
+          "title": "Share one useful tip post",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 38,
+          "title": "Message 5 relevant people with something useful (no spam)",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 39,
+          "title": "Answer 3 questions in communities",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 40,
+          "title": "Reply to every message; collect feedback",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 41,
+          "title": "Share a behind-the-scenes post",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 42,
+          "title": "Improve the product from feedback (v1.1)",
+          "minutes": 60,
+          "priority": "high"
+        },
+        {
+          "day": 43,
+          "title": "Weekly money review",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 44,
+          "title": "Offer a 30-min help call to 2 people",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 45,
+          "title": "Ask early users for testimonials",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 46,
+          "title": "Post a testimonial or result",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 47,
+          "title": "Write a 'how I built it' post",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 48,
+          "title": "Review costs: AWS bill and tools; clean up unused resources",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 49,
+          "title": "Outline an upgraded product or mini-course",
+          "minutes": 60,
+          "priority": "high"
+        },
+        {
+          "day": 50,
+          "title": "Weekly money review",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 51,
+          "title": "Outline a 5-lesson mini-course",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 52,
+          "title": "Write or record lesson 1",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 53,
+          "title": "Write or record lesson 2",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 54,
+          "title": "Write or record lesson 3",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 55,
+          "title": "Check AWS and subscription costs again",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 56,
+          "title": "Decide: continue, change or pause the side project. Write down why",
+          "minutes": 60,
+          "priority": "high"
+        },
+        {
+          "day": 57,
+          "title": "Year-end money review: income, spending, savings, net worth vs Day 1",
+          "minutes": 45,
+          "priority": "medium"
+        },
+        {
+          "day": 58,
+          "title": "Set your 2027 budget",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 59,
+          "title": "Set 2027 savings and income targets",
+          "minutes": 30,
+          "priority": "medium"
+        },
+        {
+          "day": 60,
+          "title": "Put a monthly money check on your calendar",
+          "minutes": 30,
+          "priority": "medium"
+        }
+      ]
+    },
+    {
+      "key": "self",
+      "name": "Self & Mind",
+      "icon": "🧘",
+      "color": "#9333ea",
+      "category": "mind",
+      "tasks": [
+        {
+          "day": 1,
+          "title": "Write your 60-day and year vision; copy goals into your Life Tracker",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 2,
+          "title": "Journal 10 min + 3 gratitudes",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 3,
+          "title": "Read 20 min (a book, not a screen)",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 4,
+          "title": "Meditate 10 min + write 3 gratitudes",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 5,
+          "title": "Call a family member or friend you have not spoken to in a while",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 6,
+          "title": "Phone-free for the first 30 minutes after waking",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 7,
+          "title": "Plan one fun weekend activity with people you love",
+          "minutes": 30,
+          "priority": "high"
+        },
+        {
+          "day": 8,
+          "title": "Weekly reflection (win, blocker, one fix) and plan next week",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 9,
+          "title": "Journal: what gives me energy, what drains it?",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 10,
+          "title": "Read 20 min (a book, not a screen)",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 11,
+          "title": "Meditate 10 min + write 3 gratitudes",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 12,
+          "title": "Write 3 affirmations in present tense; read them aloud",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 13,
+          "title": "One screen-free hour in the evening",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 14,
+          "title": "Do one thing purely for fun (no productivity)",
+          "minutes": 30,
+          "priority": "high"
+        },
+        {
+          "day": 15,
+          "title": "Weekly reflection (win, blocker, one fix) and plan next week",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 16,
+          "title": "Journal: 3 wins from this week",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 17,
+          "title": "Read 20 min (a book, not a screen)",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 18,
+          "title": "Breathing exercise 5 min + gratitude",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 19,
+          "title": "Message someone you appreciate and tell them why",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 20,
+          "title": "Tidy your desk or room for 20 minutes",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 21,
+          "title": "30 minutes outdoors, phone in your pocket",
+          "minutes": 30,
+          "priority": "high"
+        },
+        {
+          "day": 22,
+          "title": "Weekly reflection (win, blocker, one fix) and plan next week; check the Goals sheet",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 23,
+          "title": "Journal: my beliefs about money and success; what to change?",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 24,
+          "title": "Read 20 min (a book, not a screen)",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 25,
+          "title": "Meditate 10 min + write 3 gratitudes",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 26,
+          "title": "Learn something non-work for 20 min (music, art, a language)",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 27,
+          "title": "Digital detox evening: no social media",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 28,
+          "title": "Meet a friend or join a community event",
+          "minutes": 30,
+          "priority": "high"
+        },
+        {
+          "day": 29,
+          "title": "Weekly reflection (win, blocker, one fix) and plan next week",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 30,
+          "title": "Journal: what am I proud of so far?",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 31,
+          "title": "Read 20 min (a book, not a screen)",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 32,
+          "title": "Meditate 10 min + write 3 gratitudes",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 33,
+          "title": "Plan a small reward for your week-5 milestone",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 34,
+          "title": "Lights out on time: 7+ hours of sleep",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 35,
+          "title": "Family or friends time with no work talk",
+          "minutes": 30,
+          "priority": "high"
+        },
+        {
+          "day": 36,
+          "title": "Weekly reflection (win, blocker, one fix) and plan next week",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 37,
+          "title": "Journal: what scares me? Pick one small brave action",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 38,
+          "title": "Read 20 min (a book, not a screen)",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 39,
+          "title": "Meditate 10 min + write 3 gratitudes",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 40,
+          "title": "Visualise your ideal day for 5 min and write it down",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 41,
+          "title": "One screen-free hour in the evening",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 42,
+          "title": "30 minutes outdoors or a hobby",
+          "minutes": 30,
+          "priority": "high"
+        },
+        {
+          "day": 43,
+          "title": "Weekly reflection (win, blocker, one fix) and plan next week; plan the holiday season (rest, travel, gifts)",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 44,
+          "title": "Journal: list 10 things from this year you are grateful for",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 45,
+          "title": "Read 20 min (a book, not a screen)",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 46,
+          "title": "Meditate 10 min + write 3 gratitudes",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 47,
+          "title": "Write a thank-you note to a mentor or colleague",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 48,
+          "title": "Declutter 20 min: donate or discard 10 items",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 49,
+          "title": "Quality time with family or friends",
+          "minutes": 30,
+          "priority": "high"
+        },
+        {
+          "day": 50,
+          "title": "Weekly reflection (win, blocker, one fix) and plan next week; draft 'what I learned in 60 days'",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 51,
+          "title": "Journal: biggest lessons and mistakes",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 52,
+          "title": "Read 20 min (a book, not a screen)",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 53,
+          "title": "Meditate 10 min + write 3 gratitudes",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 54,
+          "title": "Pick next year's reading list (5 books)",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 55,
+          "title": "Digital detox evening",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 56,
+          "title": "Celebrate your progress with someone close",
+          "minutes": 30,
+          "priority": "high"
+        },
+        {
+          "day": 57,
+          "title": "Year in review: write your wins, lessons and gratitude (1 page)",
+          "minutes": 60,
+          "priority": "medium"
+        },
+        {
+          "day": 58,
+          "title": "Journal: who do I want to be in 2027?",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 59,
+          "title": "Choose a 2027 theme word and 3 core habits",
+          "minutes": 20,
+          "priority": "medium"
+        },
+        {
+          "day": 60,
+          "title": "Add your 2027 goals to the Life Tracker and Habit Tracker, then celebrate",
+          "minutes": 20,
+          "priority": "medium"
+        }
+      ]
+    }
+  ],
+  "habits": [
+    {
+      "name": "Daily movement (30+ min)",
+      "type": "daily",
+      "category": "health",
+      "priority": "high",
+      "icon": "🏃",
+      "days": 60
+    },
+    {
+      "name": "500 push-ups",
+      "type": "total",
+      "target": 500,
+      "unit": "push-ups",
+      "step": 20,
+      "category": "health",
+      "priority": "high",
+      "icon": "💪",
+      "days": 60
+    },
+    {
+      "name": "Workouts",
+      "type": "times",
+      "target": 24,
+      "category": "health",
+      "priority": "medium",
+      "icon": "🏋️",
+      "days": 60
+    },
+    {
+      "name": "Learning sessions",
+      "type": "times",
+      "target": 40,
+      "category": "learning",
+      "priority": "high",
+      "icon": "📚",
+      "days": 60
+    },
+    {
+      "name": "Code or build something",
+      "type": "daily",
+      "category": "learning",
+      "priority": "medium",
+      "icon": "⚡",
+      "days": 60
+    },
+    {
+      "name": "Track spending",
+      "type": "daily",
+      "category": "wealth",
+      "priority": "medium",
+      "icon": "💰",
+      "days": 60
+    },
+    {
+      "name": "Side-income actions",
+      "type": "times",
+      "target": 30,
+      "category": "wealth",
+      "priority": "medium",
+      "icon": "🎯",
+      "days": 60
+    },
+    {
+      "name": "Journal + 3 gratitudes",
+      "type": "daily",
+      "category": "mind",
+      "priority": "medium",
+      "icon": "✍️",
+      "days": 60
+    },
+    {
+      "name": "Read 20 minutes",
+      "type": "daily",
+      "category": "mind",
+      "priority": "low",
+      "icon": "📖",
+      "days": 60
+    },
+    {
+      "name": "Meditate 10 minutes",
+      "type": "times",
+      "target": 40,
+      "category": "mind",
+      "priority": "low",
+      "icon": "🧘",
+      "days": 60
+    }
+  ]
+}

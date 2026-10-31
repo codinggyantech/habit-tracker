@@ -41,7 +41,7 @@ async def main():
             assert not r.is_error
     saved = json.loads(data.read_text())
     print("\nFILE:", {"schemaVersion": saved["schemaVersion"], "goals": len(saved["goals"]), "logs": len(saved["logs"])})
-    assert saved["schemaVersion"] == 2 and len(saved["goals"]) == 2 and len(saved["logs"]) == 2
+    assert saved["schemaVersion"] == 3 and len(saved["goals"]) == 2 and len(saved["logs"]) == 2
     print("E2E OK")
 
 
