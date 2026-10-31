@@ -3,15 +3,22 @@
 
 // ---------------------------------------------------------------- constants
 const STORE_KEY = "habitTracker.v1";
-const CATEGORIES = {
-  health:       { label: "Health",       icon: "💪", color: "#16a34a" },
-  productivity: { label: "Productivity", icon: "⚡", color: "#4f46e5" },
-  work:         { label: "Work",         icon: "💼", color: "#0284c7" },
-  learning:     { label: "Learning",     icon: "📚", color: "#d97706" },
-  mind:         { label: "Mind",         icon: "🧘", color: "#9333ea" },
-  wealth:       { label: "Wealth",       icon: "💰", color: "#ca8a04" },
-  other:        { label: "Other",        icon: "✨", color: "#db2777" },
+const DEFAULT_CATEGORIES = [
+  { id: "health",       label: "Health",       icon: "💪", color: "#16a34a" },
+  { id: "productivity", label: "Productivity", icon: "⚡", color: "#4f46e5" },
+  { id: "work",         label: "Work",         icon: "💼", color: "#0284c7" },
+  { id: "learning",     label: "Learning",     icon: "📚", color: "#d97706" },
+  { id: "mind",         label: "Mind",         icon: "🧘", color: "#9333ea" },
+  { id: "wealth",       label: "Wealth",       icon: "💰", color: "#ca8a04" },
+  { id: "other",        label: "Other",        icon: "✨", color: "#db2777" },
+];
+const PRIORITIES = {
+  high:   { label: "High",   rank: 0, color: "#dc2626", icon: "🔴" },
+  medium: { label: "Medium", rank: 1, color: "#d97706", icon: "🟡" },
+  low:    { label: "Low",    rank: 2, color: "#2563eb", icon: "🔵" },
 };
+let CATEGORIES = {};   // id -> category, rebuilt from state.categories
+let reorderMode = false;
 const ICONS = ["💪","🏃","🧘","📚","💧","😴","🥗","💼","⚡","🎯","🧠","💰","✍️","🎨","🎵","🚴","🏊","🌱","📵","🙏"];
 const TYPES = {
   total: "Total amount",
@@ -21,15 +28,32 @@ const TYPES = {
 
 // ---------------------------------------------------------------- state
 let state = loadState();
+rebuildCats();
 let tab = "today";
 let openDetailId = null;
 
+// Fills in anything missing (older Phase 1 data has no priorities, categories or settings).
+function normalize(s) {
+  const out = {
+    goals: Array.isArray(s.goals) ? s.goals : [],
+    logs: Array.isArray(s.logs) ? s.logs : [],
+    categories: Array.isArray(s.categories) && s.categories.length ? s.categories : DEFAULT_CATEGORIES.map((c) => ({ ...c })),
+    settings: { sort: "priority", group: "category", ...(s.settings || {}) },
+  };
+  if (!out.categories.some((c) => c.id === "other")) out.categories.push({ ...DEFAULT_CATEGORIES[DEFAULT_CATEGORIES.length - 1] });
+  for (const g of out.goals) {
+    if (!PRIORITIES[g.priority]) g.priority = "medium";
+    if (!out.categories.some((c) => c.id === g.cat)) g.cat = "other";
+  }
+  return out;
+}
+function rebuildCats() { CATEGORIES = {}; state.categories.forEach((c) => { CATEGORIES[c.id] = c; }); }
 function loadState() {
   try {
     const s = JSON.parse(localStorage.getItem(STORE_KEY));
-    if (s && Array.isArray(s.goals) && Array.isArray(s.logs)) return s;
+    if (s && Array.isArray(s.goals) && Array.isArray(s.logs)) return normalize(s);
   } catch (e) { /* ignore */ }
-  return { goals: [], logs: [] };
+  return normalize({});
 }
 function save() { localStorage.setItem(STORE_KEY, JSON.stringify(state)); }
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
@@ -195,15 +219,35 @@ function goalCard(g) {
   const todayLine = g.type === "daily"
     ? `🔥 ${s.streak} day streak`
     : `Today: <b>${fmt(s.todayAmt)}</b> · need ~${fmt(Math.ceil(s.needPerDay * 10) / 10)}/day`;
-  return `<div class="card goal">
+  return `<div class="card goal" data-gid="${g.id}">
     ${ring(s.pct, 62, 8, c, Math.floor(s.pct * 100) + "%")}
     <div class="main" data-act="open" data-id="${g.id}">
       <div class="name">${esc(g.icon)} ${esc(g.name)} <span class="vis" title="${g.vis}">${g.vis === "public" ? "🌐" : "🔒"}</span></div>
       <div class="sub">${esc(progressText(g, s))}</div>
       <div class="sub">${todayLine}</div>
-      <span class="chip ${s.status.cls}">${s.status.text}</span>
+      <span class="chip ${s.status.cls}">${s.status.text}</span>${prioChip(g)}
     </div>
     <div class="actions">${action}</div></div>`;
+}
+
+function prioChip(g) {
+  const p = PRIORITIES[g.priority] || PRIORITIES.medium;
+  return `<span class="chip pri" style="--p:${p.color}" data-act="cyclepri" data-id="${g.id}" title="Tap to change priority">${p.icon} ${p.label}</span>`;
+}
+// Order goals by priority (ties keep your manual order) or purely by your manual order.
+function sorted(list) {
+  const idx = new Map(state.goals.map((g, i) => [g.id, i]));
+  const manual = (a, b) => idx.get(a.id) - idx.get(b.id);
+  return [...list].sort(state.settings.sort === "priority"
+    ? (a, b) => PRIORITIES[a.priority].rank - PRIORITIES[b.priority].rank || manual(a, b)
+    : manual);
+}
+function viewControls() {
+  const s = state.settings;
+  const opt = (v, cur, t) => `<option value="${v}" ${v === cur ? "selected" : ""}>${t}</option>`;
+  return `<div class="controls">
+    <label>Group by <select data-setting="group">${opt("category", s.group, "Category")}${opt("priority", s.group, "Priority")}</select></label>
+    <label>Order <select data-setting="sort">${opt("priority", s.sort, "Priority first")}${opt("manual", s.sort, "My order")}</select></label></div>`;
 }
 
 function renderToday() {
@@ -214,10 +258,13 @@ function renderToday() {
   let html = `<div class="card banner"><h2>${d}</h2>
     <p>${act.length ? `${touched} of ${act.length} goals logged today` : "No active goals today"}</p>
     <div class="bar"><i style="width:${act.length ? (touched / act.length) * 100 : 0}%"></i></div></div>`;
-  for (const [key, cat] of Object.entries(CATEGORIES)) {
-    const list = act.filter((g) => g.cat === key);
+  html += viewControls();
+  const groups = state.settings.group === "priority"
+    ? Object.entries(PRIORITIES).map(([k, p]) => [`${p.icon} ${p.label} priority`, act.filter((g) => g.priority === k)])
+    : Object.values(CATEGORIES).map((c) => [`${c.icon} ${esc(c.label)}`, act.filter((g) => g.cat === c.id)]);
+  for (const [label, list] of groups) {
     if (!list.length) continue;
-    html += `<div class="section-title">${cat.icon} ${cat.label}</div>` + list.map(goalCard).join("");
+    html += `<div class="section-title">${label}</div>` + sorted(list).map(goalCard).join("");
   }
   const upcoming = state.goals.filter((g) => !isActive(g));
   if (upcoming.length) html += `<p class="hint" style="text-align:center">${upcoming.length} goal(s) not active today - see the Goals tab.</p>`;
@@ -231,20 +278,34 @@ function renderGoals() {
     ["Upcoming", state.goals.filter((g) => !goalStats(g).started)],
     ["Finished", state.goals.filter((g) => goalStats(g).ended)],
   ];
-  let html = "";
+  let html = `<div class="toolbar">
+      <button class="${reorderMode ? "btn-primary" : "btn-ghost"} small" data-act="reorder">${reorderMode ? "✓ Done reordering" : "↕ Reorder"}</button>
+      <button class="btn-ghost small" data-act="cats">🏷 Categories</button></div>`;
+  html += viewControls();
+  if (reorderMode) html += `<p class="hint">Use ▲ ▼ to move a goal up or down. Your order is used when "Order" is set to "My order".</p>`;
   for (const [label, list] of groups) {
     if (!list.length) continue;
-    html += `<div class="section-title">${label} (${list.length})</div>`;
-    html += list.map((g) => {
-      const s = goalStats(g), c = colorOf(g);
-      return `<div class="card goal" data-act="open" data-id="${g.id}" style="cursor:pointer">
+    html += `<div class="section-title">${label} (${list.length})</div><div class="glist">`;
+    html += sorted(list).map((g) => {
+      const s = goalStats(g), c = colorOf(g), cat = CATEGORIES[g.cat] || {};
+      const arrows = reorderMode
+        ? `<div class="arrows"><button data-act="up" data-id="${g.id}" aria-label="Move up">▲</button><button data-act="down" data-id="${g.id}" aria-label="Move down">▼</button></div>` : "";
+      return `<div class="card goal" data-gid="${g.id}" ${reorderMode ? "" : `data-act="open" data-id="${g.id}" style="cursor:pointer"`}>
         ${ring(s.pct, 54, 7, c, Math.floor(s.pct * 100) + "%")}
         <div class="main"><div class="name">${esc(g.icon)} ${esc(g.name)} <span class="vis">${g.vis === "public" ? "🌐" : "🔒"}</span></div>
-        <div class="sub">${esc(progressText(g, s))} · ${TYPES[g.type]}</div>
-        <div class="bar dark" style="--c:${c};margin-top:8px"><i style="width:${s.pct * 100}%"></i></div></div></div>`;
-    }).join("");
+        <div class="sub">${esc(progressText(g, s))} · ${esc(cat.icon || "")} ${esc(cat.label || "")}</div>
+        <div class="bar dark" style="--c:${c};margin:8px 0 2px"><i style="width:${s.pct * 100}%"></i></div>${prioChip(g)}</div>${arrows}</div>`;
+    }).join("") + "</div>";
   }
   return html;
+}
+
+function moveGoal(id, dir, ids) {
+  const i = ids.indexOf(id), j = i + dir;
+  if (i < 0 || j < 0 || j >= ids.length) return;
+  const a = state.goals.findIndex((g) => g.id === id), b = state.goals.findIndex((g) => g.id === ids[j]);
+  [state.goals[a], state.goals[b]] = [state.goals[b], state.goals[a]];
+  save(); render();
 }
 
 function renderInsights() {
@@ -264,11 +325,19 @@ function renderInsights() {
   const any = {}; state.logs.forEach((l) => { if (l.amount > 0) any[l.date] = 1; });
   const overall = streakOf(any);
 
-  const cats = Object.entries(CATEGORIES).map(([k, c]) => {
-    const list = state.goals.filter((g) => g.cat === k);
+  const prios = Object.entries(PRIORITIES).map(([k, p]) => {
+    const list = state.goals.filter((g) => g.priority === k);
     if (!list.length) return "";
     const avg = list.reduce((a, g) => a + goalStats(g).pct, 0) / list.length;
-    return `<div class="catrow"><div class="lab">${c.icon} ${c.label}</div>
+    return `<div class="catrow"><div class="lab">${p.icon} ${p.label}</div>
+      <div class="bar dark" style="--c:${p.color}"><i style="width:${avg * 100}%"></i></div><div class="pc">${Math.round(avg * 100)}%</div></div>`;
+  }).join("");
+
+  const cats = Object.values(CATEGORIES).map((c) => {
+    const list = state.goals.filter((g) => g.cat === c.id);
+    if (!list.length) return "";
+    const avg = list.reduce((a, g) => a + goalStats(g).pct, 0) / list.length;
+    return `<div class="catrow"><div class="lab">${esc(c.icon)} ${esc(c.label)}</div>
       <div class="bar dark" style="--c:${c.color}"><i style="width:${avg * 100}%"></i></div><div class="pc">${Math.round(avg * 100)}%</div></div>`;
   }).join("");
 
@@ -281,7 +350,8 @@ function renderInsights() {
       <div class="stat"><b>${state.logs.length}</b><span>total logs</span></div>
       <div class="stat"><b>${behind}</b><span>goals behind pace</span></div></div></div>
     <div class="card"><h3 class="h">Goals logged per day (last 14 days)</h3><div class="bars">${bars}</div></div>
-    <div class="card"><h3 class="h">Average progress by category</h3>${cats}</div>`;
+    <div class="card"><h3 class="h">Average progress by category</h3>${cats}</div>
+    <div class="card"><h3 class="h">Average progress by priority</h3>${prios}</div>`;
 }
 
 function renderBackup() {
@@ -321,7 +391,7 @@ function refreshDetail(first) {
   const logs = state.logs.filter((l) => l.goalId === g.id).sort((a, b) => b.date.localeCompare(a.date) || b.ts - a.ts).slice(0, 12);
   const html = `
     <div class="detail-head"><div class="emoji">${esc(g.icon)}</div>
-      <div><h2>${esc(g.name)}</h2><p>${cat.icon} ${cat.label} · ${TYPES[g.type]} · ${g.vis === "public" ? "🌐 public" : "🔒 private"}</p></div></div>
+      <div><h2>${esc(g.name)}</h2><p>${esc(cat.icon)} ${esc(cat.label)} · ${TYPES[g.type]} · ${(PRIORITIES[g.priority] || PRIORITIES.medium).icon} ${(PRIORITIES[g.priority] || PRIORITIES.medium).label} priority · ${g.vis === "public" ? "🌐 public" : "🔒 private"}</p></div></div>
     <div class="card hero">
       ${ring(s.pct, 128, 14, c, Math.floor(s.pct * 100) + "%", "complete", true)}
       <div><div class="stat" style="margin-bottom:8px"><b>${esc(progressText(g, s))}</b><span>progress</span></div>
@@ -350,7 +420,7 @@ function refreshDetail(first) {
 // ---------------------------------------------------------------- forms
 function goalForm(g) {
   const edit = !!g;
-  const v = g || { name: "", cat: "health", icon: "💪", type: "total", target: 500, unit: "push-ups", step: 20, days: 60, start: todayStr(), vis: "private" };
+  const v = g || { name: "", cat: "health", icon: "💪", type: "total", target: 500, unit: "push-ups", step: 20, days: 60, start: todayStr(), vis: "private", priority: "medium" };
   const html = `<h2 style="margin:6px 0 0">${edit ? "Edit goal" : "New goal"}</h2>
   <form id="goalForm">
     <label class="f">Goal name<input name="name" required maxlength="60" value="${esc(v.name)}" placeholder="e.g. Push-ups"></label>
@@ -368,8 +438,16 @@ function goalForm(g) {
       <label class="f">Duration (days)<input name="days" type="number" min="1" max="730" value="${v.days}" required></label>
       <label class="f">Start date<input name="start" type="date" value="${v.start}" required></label>
     </div>
+    <label class="f">Priority</label>
+    <div class="seg">
+      ${Object.entries(PRIORITIES).map(([k, p]) => `<label><input type="radio" name="priority" value="${k}" ${v.priority === k ? "checked" : ""}><span>${p.icon} ${p.label}</span></label>`).join("")}
+    </div>
     <label class="f">Category
-      <select name="cat">${Object.entries(CATEGORIES).map(([k, c]) => `<option value="${k}" ${v.cat === k ? "selected" : ""}>${c.icon} ${c.label}</option>`).join("")}</select></label>
+      <select name="cat">${Object.values(CATEGORIES).map((c) => `<option value="${c.id}" ${v.cat === c.id ? "selected" : ""}>${esc(c.icon)} ${esc(c.label)}</option>`).join("")}
+      <option value="__new">＋ New category...</option></select></label>
+    <div id="newCat" class="catedit" style="display:none;margin-top:8px">
+      <input name="ci" maxlength="4" value="🏷" aria-label="Category icon"><input name="cn" maxlength="24" placeholder="Category name" aria-label="Category name"><input name="cc" type="color" value="#0ea5e9" aria-label="Category color">
+    </div>
     <label class="f">Icon</label>
     <div class="icons">${ICONS.map((i) => `<label><input type="radio" name="icon" value="${i}" ${v.icon === i ? "checked" : ""}>${i}</label>`).join("")}</div>
     <label class="f">Who can see this goal? (sharing comes in Phase 2)
@@ -389,23 +467,54 @@ function goalForm(g) {
       times: "Count how many times you did something, like 11 workouts. Each tap adds 1.",
       daily: "Do it once every day. The target is simply every day of the duration.",
     }[t];
+    $("#newCat").style.display = form.cat.value === "__new" ? "flex" : "none";
   };
   form.addEventListener("change", syncType); syncType();
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const f = new FormData(form), type = f.get("type");
+    let catId = f.get("cat");
+    if (catId === "__new") {
+      const label = f.get("cn").trim();
+      if (!label) { toast("Give the new category a name"); return; }
+      catId = addCategory(label, f.get("ci").trim() || "🏷", f.get("cc"));
+    }
     const goal = {
       id: g ? g.id : uid(), name: f.get("name").trim(), type,
       target: type === "daily" ? 0 : Number(f.get("target")) || 1,
       unit: type === "total" ? f.get("unit").trim() : type === "times" ? "times" : "",
       step: type === "total" ? Number(f.get("step")) || 1 : 1,
       days: Math.max(1, Math.round(Number(f.get("days")))), start: f.get("start"),
-      cat: f.get("cat"), icon: f.get("icon") || "🎯", vis: f.get("vis"),
+      cat: catId, icon: f.get("icon") || "🎯", vis: f.get("vis"),
+      priority: PRIORITIES[f.get("priority")] ? f.get("priority") : "medium",
     };
     if (edit) state.goals = state.goals.map((x) => (x.id === goal.id ? goal : x)); else state.goals.push(goal);
     save(); closeSheet(); render();
     toast(edit ? "Goal updated" : "Goal created 🎯");
   });
+}
+
+// ---------------------------------------------------------------- categories
+function addCategory(label, icon, color) {
+  let id = label.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "cat";
+  if (CATEGORIES[id]) id += "-" + uid().slice(0, 3);
+  state.categories.push({ id, label, icon, color: color || "#0ea5e9" });
+  rebuildCats(); save();
+  return id;
+}
+
+function categoryManager() {
+  const row = (c) => `<div class="catedit" data-cid="${c.id}">
+      <input class="ci" value="${esc(c.icon)}" maxlength="4" aria-label="Icon">
+      <input class="cn" value="${esc(c.label)}" maxlength="24" aria-label="Name">
+      <input class="cc" type="color" value="${esc(c.color)}" aria-label="Color">
+      ${c.id === "other" ? `<span class="lock" title="Default category, cannot be deleted">🔒</span>` : `<button type="button" class="x" data-act="catdel" data-id="${c.id}" aria-label="Delete category">🗑</button>`}</div>`;
+  openSheet(`<h2 style="margin:6px 0 0">🏷 Categories</h2>
+    <p class="hint">Rename them, change icon or color, or add your own. Deleting a category moves its goals to "Other".</p>
+    <form id="catForm">${state.categories.map(row).join("")}
+      <h3 class="h" style="margin:16px 0 6px">Add a new category</h3>
+      <div class="catedit" data-cid="__new"><input class="ci" value="🏷" maxlength="4" aria-label="Icon"><input class="cn" maxlength="24" placeholder="e.g. Family" aria-label="Name"><input class="cc" type="color" value="#0ea5e9" aria-label="Color"><span></span></div>
+      <div class="btn-row"><button class="btn-primary" type="submit">Save categories</button></div></form>`);
 }
 
 function customAmount(id) {
@@ -472,15 +581,53 @@ document.addEventListener("click", (e) => {
       break;
     }
     case "dellog": removeLog(id); render(); break;
+    case "cyclepri": {
+      const g = state.goals.find((x) => x.id === id); if (!g) break;
+      const order = Object.keys(PRIORITIES);
+      g.priority = order[(order.indexOf(g.priority) + 1) % order.length];
+      save(); render(); toast(`Priority: ${PRIORITIES[g.priority].label}`);
+      break;
+    }
+    case "reorder":
+      reorderMode = !reorderMode;
+      if (reorderMode && state.settings.sort !== "manual") { state.settings.sort = "manual"; save(); toast('Order set to "My order"'); }
+      render();
+      break;
+    case "up": case "down": {
+      const ids = $$("[data-gid]", el.closest(".glist")).map((x) => x.dataset.gid);
+      moveGoal(id, el.dataset.act === "up" ? -1 : 1, ids);
+      break;
+    }
+    case "cats": categoryManager(); break;
+    case "catdel": {
+      const c = CATEGORIES[id];
+      if (c && id !== "other" && confirm(`Delete category "${c.label}"? Its goals move to "Other".`)) {
+        state.goals.forEach((g) => { if (g.cat === id) g.cat = "other"; });
+        state.categories = state.categories.filter((x) => x.id !== id);
+        rebuildCats(); save(); render(); categoryManager();
+      }
+      break;
+    }
     case "export": exportData(); break;
     case "sample": loadSample(); break;
     case "wipe":
-      if (confirm("Delete ALL goals and logs on this device? This cannot be undone.")) { state = { goals: [], logs: [] }; save(); render(); toast("Everything deleted"); }
+      if (confirm("Delete ALL goals and logs on this device? This cannot be undone.")) { state = normalize({}); rebuildCats(); save(); render(); toast("Everything deleted"); }
       break;
   }
 });
 
 document.addEventListener("submit", (e) => {
+  if (e.target.id === "catForm") {
+    e.preventDefault();
+    for (const r of $$(".catedit", e.target)) {
+      const label = $(".cn", r).value.trim(), icon = $(".ci", r).value.trim() || "🏷", color = $(".cc", r).value;
+      if (r.dataset.cid === "__new") { if (label) addCategory(label, icon, color); continue; }
+      const c = CATEGORIES[r.dataset.cid];
+      if (c && label) { c.label = label; c.icon = icon; c.color = color; }
+    }
+    rebuildCats(); save(); closeSheet(); render(); toast("Categories saved");
+    return;
+  }
   if (e.target.id !== "logForm") return;
   e.preventDefault();
   const f = new FormData(e.target), g = state.goals.find((x) => x.id === openDetailId);
@@ -494,6 +641,7 @@ document.addEventListener("submit", (e) => {
 });
 
 document.addEventListener("change", (e) => {
+  if (e.target.dataset.setting) { state.settings[e.target.dataset.setting] = e.target.value; save(); render(); return; }
   if (e.target.id !== "importFile") return;
   const file = e.target.files[0]; if (!file) return;
   const reader = new FileReader();
@@ -502,7 +650,7 @@ document.addEventListener("change", (e) => {
       const data = JSON.parse(reader.result);
       if (!Array.isArray(data.goals) || !Array.isArray(data.logs)) throw new Error("bad file");
       if (!confirm(`Import ${data.goals.length} goals and ${data.logs.length} logs? This replaces your current data.`)) return;
-      state = { goals: data.goals, logs: data.logs }; save(); render(); toast("Backup imported ✓");
+      state = normalize(data); rebuildCats(); save(); render(); toast("Backup imported ✓");
     } catch (err) { toast("That file is not a valid backup"); }
   };
   reader.readAsText(file);
@@ -521,10 +669,10 @@ function loadSample() {
   const start = addDays(todayStr(), -20);
   const mk = (o) => ({ id: uid(), unit: "", step: 1, target: 0, days: 60, start, vis: "private", ...o });
   const goals = [
-    mk({ name: "Push-ups", icon: "💪", cat: "health", type: "total", target: 500, unit: "push-ups", step: 20, vis: "public" }),
-    mk({ name: "Workouts", icon: "🏃", cat: "health", type: "times", target: 24, unit: "times" }),
-    mk({ name: "Read 20 pages", icon: "📚", cat: "learning", type: "daily", vis: "public" }),
-    mk({ name: "Deep work hours", icon: "⚡", cat: "productivity", type: "total", target: 80, unit: "hours", step: 1 }),
+    mk({ name: "Push-ups", icon: "💪", cat: "health", type: "total", target: 500, unit: "push-ups", step: 20, vis: "public", priority: "high" }),
+    mk({ name: "Workouts", icon: "🏃", cat: "health", type: "times", target: 24, unit: "times", priority: "medium" }),
+    mk({ name: "Read 20 pages", icon: "📚", cat: "learning", type: "daily", vis: "public", priority: "low" }),
+    mk({ name: "Deep work hours", icon: "⚡", cat: "productivity", type: "total", target: 80, unit: "hours", step: 1, priority: "high" }),
   ];
   const logs = [];
   const put = (g, i, amt) => logs.push({ id: uid(), goalId: g.id, date: addDays(start, i), amount: amt, ts: Date.now() + logs.length });

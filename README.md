@@ -14,6 +14,14 @@ Your data is stored in your browser (localStorage). Use Backup -> Export to save
 - **Number of times** - e.g. 11 workouts. Each tap logs one.
 - **Daily habit** - once a day, tracks streaks.
 
+## New in Phase 2 (priorities and categories)
+- **Priority** per goal (High / Medium / Low). Tap the priority chip on any goal to cycle it.
+- **Group by** Category or Priority, and **Order** by Priority first or My order (Today and Goals tabs).
+- **Reorder** (Goals tab): move goals up/down with the arrow buttons; this sets "My order".
+- **Your own categories**: Goals tab -> Categories (rename, change icon/color, add, delete),
+  or pick "New category" when creating a goal.
+- Old Phase 1 backups still import: missing priorities become Medium.
+
 ## Run it on your computer
 Opening index.html directly works for most things. For the full experience:
 ```
