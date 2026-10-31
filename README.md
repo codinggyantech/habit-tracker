@@ -28,6 +28,9 @@ Your data is stored in your browser (localStorage). Use Backup -> Export to save
 - Import validates every goal and log, reports what it skipped, and still accepts Phase 1 backups.
 - New goal form: pick **Daily habit** or a **Custom** target (count or amount), or start from a quick template.
 
+## MCP server (connect an AI / Ollama)
+See `mcp-server/README.md`. It reads and writes the same JSON file the app exports/imports.
+
 ## Run it on your computer
 Opening index.html directly works for most things. For the full experience:
 ```

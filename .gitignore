@@ -1,0 +1,5 @@
+.DS_Store
+__pycache__/
+*.pyc
+mcp-server/.venv/
+mcp-server/data/
